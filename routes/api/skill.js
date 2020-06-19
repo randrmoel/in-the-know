@@ -1,0 +1,89 @@
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+
+const Skills = require('../../models/Skills');
+
+        //Add a Skill
+        router.post('/skill', passport.authenticate("jwt", {session:false}) ,(req, res)=>{
+            const skillsName = req.body.skillsName;
+            const User = req.user.id;
+            const Cat = req.body.catId;
+
+            const newSkill = new Skills({
+                skillsName,
+                Cat,
+                User
+            });
+
+            newSkill.save()
+            .then(user => res.json(user))
+            .catch(err => res.send(err));
+        });
+
+        //Get all skills by user
+        router.get('/skill', passport.authenticate("jwt", {session:false}), (req, res)=>{
+            const User = req.user.id;
+            Skills.find({User})
+            .sort("skillsName")
+            .then(function(data) {res.send(data)})
+            .catch(err => res.send(err));
+        });
+
+        //Delete a skill by id
+        router.delete('/skill/:id', (req, res)=>{
+            const _id = req.params.id;
+            Skills.deleteOne({_id}, (err, result) =>{
+                if(err) return res.send(err);
+                res.send(result);
+            });
+        });
+
+        //Master a skill by id
+        router.put('/skill/:id', (req, res)=>{
+            const _id = req.params.id;
+            Skills.updateOne({_id}, {$set:{Master:true}}, (err, result)=>{
+                if(err) return res.send(err);
+                res.send(result);
+            });
+        });
+
+        //Unmaster a skill
+        router.put('/unskill/:id', (req, res)=>{
+            const _id = req.params.id;
+            Skills.updateOne({_id}, {$set:{Master:false}}, (err, result)=>{
+                if(err) return res.send(err);
+                res.send(result);
+            });
+        });
+
+        //Get all mastered skills
+        router.get('/allmasteredskill', passport.authenticate("jwt", {session:false}),  (req, res)=>{
+            const User = req.user.id;
+            Skills.find({$and:[{User}, {Master:true}]}, null, {sort:"skillsName"}, (err, data)=>{
+                if(err) return res.send(err);
+                res.send(data)
+            });
+        });
+
+        //Get all unmastered skills
+        router.get('/allunmasteredskill', passport.authenticate("jwt", {session:false}) ,(req, res)=>{
+            const User = req.user.id;
+            Skills.find({$and:[{User}, {Master:false}]}, null, {sort:"skillsName"}, (err, data)=>{
+                if(err) return res.send(err);
+                res.send(data)
+            });
+        });
+
+        //Get all user's skills by category id
+        router.get('/allskillcat', passport.authenticate("jwt", {session:false}) ,(req, res)=>{
+            const User = req.user.id;
+            const Cat = req.body.catId;
+            Skills.find({$and:[{User}, {Cat}]}, null, {sort:"skillsName"}, (err, data)=>{
+                if(err) return res.send(err);
+                res.send(data)
+            });        
+        });
+        
+
+module.exports = router;
