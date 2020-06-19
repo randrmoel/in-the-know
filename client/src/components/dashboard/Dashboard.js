@@ -4,10 +4,29 @@ import { connect } from 'react-redux';
 import { logoutUser } from '../../actions/authActions';
 import Main from '../Main'
 import Navbar from "../layout/Navbar";
+import API from "../../utils/API"
 // import UserInputs from "../UserInputs"
 
 
 class Dashboard extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            firstName: "",
+            lastName: ""
+        }
+    }
+
+    componentDidMount(){
+        API.getUserName()
+        .then(res => {
+            console.log(res);
+            this.setState({firstName: res.data.firstName, lastName: res.data.lastName})
+            console.log(this.state)
+        })
+        .catch(error => console.log(error))
+    }
+
     onLogoutClick = e => {
         e.preventDefault();
         this.props.logoutUser();
@@ -17,7 +36,9 @@ class Dashboard extends Component {
         // const { user } = this.props.auth;
         return (
             <div >
-                <Navbar />
+                <Navbar  
+                firstName = {this.state.firstName}
+                lastName = {this.state.lastName}/>
                 <Main />
                 {/* <UserInputs /> */}
                 <button className="btn btn-large waves-effect waves-light hoverable" style={{

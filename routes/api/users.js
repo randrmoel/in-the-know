@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
+const passport= require("passport")
 
 const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
@@ -88,5 +89,13 @@ router.post('/login', (req, res) => {
 
     }); // end post scope for login
 }); // end scope login
+
+router.get('/username', passport.authenticate("jwt", {session:false}) ,(req, res)=>{
+    const _id = req.user.id;
+    User.findById(_id, 'firstName lastName', (err, data)=>{
+        if(err) return res.send(err);
+        res.send(data)
+    })        
+});
 
 module.exports = router;

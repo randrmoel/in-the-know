@@ -1,6 +1,10 @@
 import axios from "axios";
 
 export default {
+    getUserName: function(data){
+        return axios.get("/api/users/username", data);
+    },
+
     // Add Category Categories are unique
     addCat: function(data){
         return axios.post("/api/cat/cat", data);

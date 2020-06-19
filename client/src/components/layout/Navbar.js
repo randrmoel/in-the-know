@@ -4,10 +4,12 @@ import { Link } from 'react-router-dom';
 
 const Main = props => {
   return (
-
-    <nav>
+    
+      
+    
+    <nav> 
       <div className="nav-wrapper">
-        
+
         <Link to="/dashboard" className="brand-logo right">
           <i className="fa fa-lightbulb-o" aria-hidden="true"></i>
         </Link>
@@ -18,6 +20,9 @@ const Main = props => {
           <li><Link to="/videosearch">Search Tutorials</Link></li>
           <li><Link to="/definitions">My Definitions</Link></li>
           <li><Link to="/library">My Library</Link></li>
+          <li className = "right" style ={{paddingLeft:'500px', fontFamily:'cursive', fontSize:'25px'}}>
+            Welcome Back: {props.firstName + " " + props.lastName}
+          </li>
         </ul>
       </div>
     </nav>
